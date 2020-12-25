@@ -1,5 +1,6 @@
 //jshint esversion:6
-
+require('dotenv').config();
+const MONGODB_URI = process.env.MONGODB_URI;
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -11,19 +12,15 @@ const {
 } = require("./data.js");
 
 const app = express();
-const PORT = 3000;
-
+// const PORT = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs');
-
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(express.static("public"));
-
-
-mongoose.connect("mongodb+srv://mtruong:everwood@cluster0.danc0.mongodb.net/todolistDB?retryWrites=true&w=majority/", {
-  useNewUrlParser: true
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true, useUnifiedTopology: true
 });
 
 app.get("/", function(req, res) {
@@ -144,6 +141,11 @@ app.post("/delete", (req, res) => {
 app.get("/about", function(req, res) {
   res.render("about");
 });
+
+let PORT = process.env.PORT;
+if (PORT == null || PORT == "") {
+  PORT = 3000;
+}
 
 app.listen(PORT, function() {
   console.log("Server started on port 3000");
